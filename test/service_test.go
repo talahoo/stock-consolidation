@@ -134,7 +134,7 @@ func TestStockService(t *testing.T) {
 		for _, tc := range testCases {
 			mockRepo.stockChan <- tc
 			// Allow some time for processing
-			time.Sleep(50 * time.Millisecond)
+			time.Sleep(10 * time.Millisecond) // Reduced from 50ms
 		}
 	})
 
@@ -158,7 +158,7 @@ func TestStockService(t *testing.T) {
 
 		// Cancel context after a short delay
 		go func() {
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(20 * time.Millisecond) // Reduced from 100ms
 			cancel()
 		}()
 
@@ -174,9 +174,15 @@ func TestStockService(t *testing.T) {
 		}
 
 		mockRepo.stockChan <- testStock
+		time.Sleep(10 * time.Millisecond) // Reduced from 50ms
+
+		err := mockRepo.Close()
+		if err != nil {
+			t.Errorf("Failed to close repository: %v", err)
+		}
 
 		// Allow time for cleanup
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(20 * time.Millisecond) // Reduced from 100ms
 	})
 
 	t.Run("repository close", func(t *testing.T) {
@@ -206,7 +212,7 @@ func TestStockService(t *testing.T) {
 		}
 
 		mockRepo.stockChan <- testStock
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond) // Reduced from 50ms
 
 		err := mockRepo.Close()
 		if err != nil {
@@ -214,6 +220,6 @@ func TestStockService(t *testing.T) {
 		}
 
 		// Allow time for cleanup
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(20 * time.Millisecond) // Reduced from 100ms
 	})
 }

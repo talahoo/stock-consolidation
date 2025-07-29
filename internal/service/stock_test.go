@@ -14,6 +14,7 @@ import (
 type mockStockRepository struct {
 	ListenForChangesFunc func(ctx context.Context) (<-chan domain.Stock, error)
 	CloseFunc            func() error
+	stockChan            chan domain.Stock
 }
 
 func (m *mockStockRepository) ListenForChanges(ctx context.Context) (<-chan domain.Stock, error) {
@@ -101,6 +102,7 @@ func TestStockService_ListenForChanges(t *testing.T) {
 			ListenForChangesFunc: func(_ context.Context) (<-chan domain.Stock, error) {
 				return stockChan, nil
 			},
+			stockChan: stockChan,
 		}
 
 		service := service.NewStockService(mockRepo)
@@ -135,9 +137,10 @@ func TestStockService_ListenForChanges(t *testing.T) {
 			},
 		}
 
-		for _, stock := range testStocks {
-			stockChan <- stock
-			time.Sleep(50 * time.Millisecond) // Allow time for processing
+		for _, tc := range testStocks {
+			mockRepo.stockChan <- tc
+			// Allow some time for processing
+			time.Sleep(10 * time.Millisecond) // Reduced from 50ms
 		}
 
 		close(stockChan)
@@ -150,6 +153,7 @@ func TestStockService_ListenForChanges(t *testing.T) {
 				close(ch)
 				return ch, nil
 			},
+			stockChan: make(chan domain.Stock),
 		}
 
 		service := service.NewStockService(mockRepo)

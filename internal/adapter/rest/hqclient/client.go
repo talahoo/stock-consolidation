@@ -10,6 +10,7 @@ import (
 	"stock-consolidation/internal/core/domain"
 	"stock-consolidation/pkg/config"
 	"stock-consolidation/pkg/logger"
+	"time"
 )
 
 // HQClient handles communication with the HQ endpoint
@@ -24,7 +25,9 @@ func NewHQClient(cfg *config.Config) *HQClient {
 	return &HQClient{
 		endpoint:   cfg.HQEndPoint,
 		authHeader: cfg.HQBasicAuthorization,
-		httpClient: &http.Client{},
+		httpClient: &http.Client{
+			Timeout: 5 * time.Second, // Add timeout to prevent long delays
+		},
 	}
 }
 
