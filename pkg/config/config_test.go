@@ -79,11 +79,11 @@ func TestLoadConfig(t *testing.T) {
 		}
 	})
 
-	t.Run("missing optional SERVICE_PORT", func(t *testing.T) {
+	t.Run("missing required SERVICE_PORT", func(t *testing.T) {
 		// Clear environment variables
 		os.Clearenv()
 
-		// Set required variables
+		// Set required variables except SERVICE_PORT
 		setEnv(t, "DB_HOST", "localhost")
 		setEnv(t, "DB_PORT", "5432")
 		setEnv(t, "DB_USER", "admin")
@@ -92,14 +92,12 @@ func TestLoadConfig(t *testing.T) {
 		setEnv(t, "HQ_END_POINT", "http://localhost:8080")
 		setEnv(t, "HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
 
-		cfg, err := config.Load()
-		if err != nil {
-			t.Fatalf("LoadConfig() error = %v", err)
+		_, err := config.Load()
+		if err == nil {
+			t.Error("LoadConfig() expected error for missing SERVICE_PORT, got nil")
 		}
-
-		// Should use default port
-		if cfg.ServicePort != "3000" {
-			t.Errorf("LoadConfig() ServicePort = %v, want %v", cfg.ServicePort, "3000")
+		if err.Error() != "SERVICE_PORT is required" {
+			t.Errorf("LoadConfig() error = %v, want %v", err, "SERVICE_PORT is required")
 		}
 	})
 

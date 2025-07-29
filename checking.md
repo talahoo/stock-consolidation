@@ -87,6 +87,9 @@ git add .; git commit -m "Revamp for workflow Test for Set up job"
 
 git add .; git commit -m "change internal adapter db for lister test"
 
+git add .; git commit -m "change pkg,test,adapter"
+
+
 
 git push origin master
 
@@ -153,3 +156,9 @@ Pilih "Create status badge"
 Copy markdown dan tambahkan ke README.md
 
 golangci-lint run
+
+go test ./... -v -short
+
+go test ./pkg/logger -v
+
+go test ./pkg/logger -v -count=1

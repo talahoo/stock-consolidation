@@ -18,7 +18,12 @@ var (
 
 // Init initializes the logger with file output
 func Init() error {
-	logDir := "/app/logs"
+	// Use relative path for tests, absolute path for production
+	logDir := "logs"
+	if os.Getenv("TESTING") == "" {
+		logDir = "/app/logs"
+	}
+
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		return fmt.Errorf("failed to create log directory: %v", err)
 	}

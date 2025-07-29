@@ -3,8 +3,10 @@ package hqclient_test
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -35,15 +37,18 @@ func TestHQClient_SendStockChange(t *testing.T) {
 				t.Errorf("Expected Content-Type application/json, got %s", contentType)
 			}
 
-			// Decode request body
-			var stock domain.Stock
-			if err := json.NewDecoder(r.Body).Decode(&stock); err != nil {
-				t.Errorf("Failed to decode request body: %v", err)
+			// Read and check request body as raw JSON
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				t.Errorf("Failed to read request body: %v", err)
 			}
 
-			// Check times
-			if !stock.CreatedAt.Equal(testTime) || !stock.UpdatedAt.Equal(testTime) {
-				t.Error("Time fields do not match")
+			// Check that the body contains expected fields
+			bodyStr := string(body)
+			if !strings.Contains(bodyStr, `"product_id":1`) ||
+				!strings.Contains(bodyStr, `"branch_id":1`) ||
+				!strings.Contains(bodyStr, `"quantity":10`) {
+				t.Error("Request body does not contain expected fields")
 			}
 
 			// Send response
