@@ -13,7 +13,7 @@ type mockStockRepository struct {
 	stockChan chan domain.Stock
 }
 
-func (m *mockStockRepository) ListenForChanges(ctx context.Context) (<-chan domain.Stock, error) {
+func (m *mockStockRepository) ListenForChanges(_ context.Context) (<-chan domain.Stock, error) {
 	return m.stockChan, nil
 }
 

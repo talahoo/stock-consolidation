@@ -23,7 +23,7 @@ func setupLogDir() func() {
 			return
 		}
 		for _, file := range files {
-			os.Remove(file)
+			_ = os.Remove(file) // Ignore errors in cleanup
 		}
 	}
 }

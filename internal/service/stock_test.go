@@ -49,22 +49,44 @@ func setupTestEnv() func() {
 	}
 
 	// Set test environment variables
-	os.Setenv("DB_HOST", "localhost")
-	os.Setenv("DB_PORT", "5432")
-	os.Setenv("DB_USER", "admin")
-	os.Setenv("DB_PASSWORD", "admin123")
-	os.Setenv("DB_NAME", "stockdb")
-	os.Setenv("SERVICE_PORT", "3000")
-	os.Setenv("HQ_END_POINT", "http://localhost:8085/stock")
-	os.Setenv("HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
+	if err := os.Setenv("DB_HOST", "localhost"); err != nil {
+		panic(fmt.Sprintf("Failed to set DB_HOST: %v", err))
+	}
+	if err := os.Setenv("DB_PORT", "5432"); err != nil {
+		panic(fmt.Sprintf("Failed to set DB_PORT: %v", err))
+	}
+	if err := os.Setenv("DB_USER", "admin"); err != nil {
+		panic(fmt.Sprintf("Failed to set DB_USER: %v", err))
+	}
+	if err := os.Setenv("DB_PASSWORD", "admin123"); err != nil {
+		panic(fmt.Sprintf("Failed to set DB_PASSWORD: %v", err))
+	}
+	if err := os.Setenv("DB_NAME", "stockdb"); err != nil {
+		panic(fmt.Sprintf("Failed to set DB_NAME: %v", err))
+	}
+	if err := os.Setenv("SERVICE_PORT", "3000"); err != nil {
+		panic(fmt.Sprintf("Failed to set SERVICE_PORT: %v", err))
+	}
+	if err := os.Setenv("HQ_END_POINT", "http://localhost:8085/stock"); err != nil {
+		panic(fmt.Sprintf("Failed to set HQ_END_POINT: %v", err))
+	}
+	if err := os.Setenv("HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz"); err != nil {
+		panic(fmt.Sprintf("Failed to set HQ_BASIC_AUTHORIZATION: %v", err))
+	}
 
 	// Return cleanup function
 	return func() {
 		for env, value := range originalEnvVars {
 			if value != "" {
-				os.Setenv(env, value)
+				if err := os.Setenv(env, value); err != nil {
+					// Log error but don't fail test
+					fmt.Printf("Warning: Failed to restore environment variable %s: %v\n", env, err)
+				}
 			} else {
-				os.Unsetenv(env)
+				if err := os.Unsetenv(env); err != nil {
+					// Log error but don't fail test
+					fmt.Printf("Warning: Failed to unset environment variable %s: %v\n", env, err)
+				}
 			}
 		}
 	}
@@ -76,7 +98,7 @@ func TestStockService_ListenForChanges(t *testing.T) {
 	t.Run("success receive stock changes", func(t *testing.T) {
 		stockChan := make(chan domain.Stock)
 		mockRepo := &mockStockRepository{
-			ListenForChangesFunc: func(ctx context.Context) (<-chan domain.Stock, error) {
+			ListenForChangesFunc: func(_ context.Context) (<-chan domain.Stock, error) {
 				return stockChan, nil
 			},
 		}
@@ -123,7 +145,7 @@ func TestStockService_ListenForChanges(t *testing.T) {
 
 	t.Run("repository close", func(t *testing.T) {
 		mockRepo := &mockStockRepository{
-			ListenForChangesFunc: func(ctx context.Context) (<-chan domain.Stock, error) {
+			ListenForChangesFunc: func(_ context.Context) (<-chan domain.Stock, error) {
 				ch := make(chan domain.Stock)
 				close(ch)
 				return ch, nil

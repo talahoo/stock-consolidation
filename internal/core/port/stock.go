@@ -1,3 +1,4 @@
+// Package port defines the interfaces for external dependencies
 package port
 
 import (

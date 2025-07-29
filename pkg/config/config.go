@@ -1,3 +1,4 @@
+// Package config provides configuration management for the application
 package config
 
 import (
@@ -5,6 +6,7 @@ import (
 	"os"
 )
 
+// Config holds the application configuration
 type Config struct {
 	DBHost               string
 	DBPort               string
@@ -16,6 +18,7 @@ type Config struct {
 	HQBasicAuthorization string
 }
 
+// Load loads the configuration from environment variables
 func Load() (*Config, error) {
 	cfg := &Config{
 		DBHost:               os.Getenv("DB_HOST"),

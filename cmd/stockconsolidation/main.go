@@ -1,3 +1,4 @@
+// Package main provides the entry point for the stock consolidation service
 package main
 
 import (
@@ -52,7 +53,11 @@ func main() {
 
 	// Start listening for stock changes in background
 	go func() {
-		defer listener.Close()
+		defer func() {
+			if err := listener.Close(); err != nil {
+				logger.Error("Error closing listener: %v", err)
+			}
+		}()
 		if err := stockService.ListenForChanges(); err != nil {
 			logger.Error("Error listening for changes: %v", err)
 		}

@@ -82,6 +82,8 @@ git status
 
 git add .; git commit -m "Update checking.md with testing steps and fix database connection"
 
+git add .; git commit -m "Refactoring for linter"
+
 git push origin master
 
 --
@@ -143,3 +145,5 @@ Di GitHub, pergi ke tab Actions
 Klik "..." di samping workflow
 Pilih "Create status badge"
 Copy markdown dan tambahkan ke README.md
+
+golangci-lint run

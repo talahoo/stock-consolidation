@@ -1,3 +1,4 @@
+// Package domain contains the core domain entities and business logic
 package domain
 
 import (

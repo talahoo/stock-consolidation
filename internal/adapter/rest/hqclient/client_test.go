@@ -48,7 +48,9 @@ func TestHQClient_SendStockChange(t *testing.T) {
 
 			// Send response
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(map[string]string{"status": "success"})
+			if err := json.NewEncoder(w).Encode(map[string]string{"status": "success"}); err != nil {
+				t.Errorf("Failed to encode response: %v", err)
+			}
 		}))
 		defer server.Close()
 
@@ -77,9 +79,11 @@ func TestHQClient_SendStockChange(t *testing.T) {
 
 	t.Run("server error response", func(t *testing.T) {
 		// Create test server that returns an error
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]string{"error": "internal server error"})
+			if err := json.NewEncoder(w).Encode(map[string]string{"error": "internal server error"}); err != nil {
+				t.Errorf("Failed to encode error response: %v", err)
+			}
 		}))
 		defer server.Close()
 

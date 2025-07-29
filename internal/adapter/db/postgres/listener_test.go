@@ -24,7 +24,7 @@ type mockPGListener struct {
 	closeCalled   bool
 }
 
-func (m *mockPGListener) Listen(channel string) error {
+func (m *mockPGListener) Listen(_ string) error {
 	m.listenCalled = true
 	return m.listenError
 }
@@ -41,6 +41,13 @@ func (m *mockPGListener) Close() error {
 
 func (m *mockPGListener) NotificationChannel() <-chan *pq.Notification {
 	return m.notifications
+}
+
+// closeListener is a helper function to close the listener and check for errors
+func closeListener(t *testing.T, listener *postgres.StockListener) {
+	if err := listener.Close(); err != nil {
+		t.Errorf("Failed to close listener: %v", err)
+	}
 }
 
 func TestPostgresListener(t *testing.T) {
@@ -67,7 +74,7 @@ func TestPostgresListener(t *testing.T) {
 
 		// Create listener with mock
 		listener := postgres.NewListenerWithPG(mock)
-		defer listener.Close()
+		defer closeListener(t, listener)
 
 		// Start listening
 		stockChan, err := listener.ListenForChanges(context.Background())
@@ -114,7 +121,7 @@ func TestPostgresListener(t *testing.T) {
 
 		// Create listener with mock
 		listener := postgres.NewListenerWithPG(mock)
-		defer listener.Close()
+		defer closeListener(t, listener)
 
 		// Start listening
 		stockChan, err := listener.ListenForChanges(context.Background())
@@ -138,7 +145,7 @@ func TestPostgresListener(t *testing.T) {
 
 		// Create listener with mock
 		listener := postgres.NewListenerWithPG(mock)
-		defer listener.Close()
+		defer closeListener(t, listener)
 
 		// Start listening - should get error
 		_, err := listener.ListenForChanges(context.Background())
@@ -154,7 +161,7 @@ func TestPostgresListener(t *testing.T) {
 
 		// Create listener with mock
 		listener := postgres.NewListenerWithPG(mock)
-		defer listener.Close()
+		defer closeListener(t, listener)
 
 		// Start listening
 		stockChan, err := listener.ListenForChanges(context.Background())
@@ -183,7 +190,7 @@ func TestPostgresListener(t *testing.T) {
 
 		// Create listener with mock
 		listener := postgres.NewListenerWithPG(mock)
-		defer listener.Close()
+		defer closeListener(t, listener)
 
 		ctx, cancel := context.WithCancel(context.Background())
 
@@ -219,7 +226,7 @@ func TestPostgresListener(t *testing.T) {
 
 		listener, err := postgres.NewListener(cfg)
 		if err == nil {
-			defer listener.Close()
+			defer closeListener(t, listener)
 			stockChan, err := listener.ListenForChanges(context.Background())
 			if err != nil {
 				t.Fatalf("Failed to start listening: %v", err)

@@ -1,3 +1,4 @@
+// Package service provides business logic for stock change processing
 package service
 
 import (
@@ -9,11 +10,13 @@ import (
 	"stock-consolidation/pkg/logger"
 )
 
+// StockService handles stock change notifications and forwards them to HQ
 type StockService struct {
 	repo   port.StockRepository
 	client *hqclient.HQClient
 }
 
+// NewStockService creates a new StockService instance
 func NewStockService(repo port.StockRepository) *StockService {
 	cfg, err := config.Load()
 	if err != nil {
@@ -26,6 +29,7 @@ func NewStockService(repo port.StockRepository) *StockService {
 	}
 }
 
+// ListenForChanges starts listening for stock changes and forwards them to HQ
 func (s *StockService) ListenForChanges() error {
 	logger.Info("Starting StockService.ListenForChanges()")
 	ctx := context.Background()

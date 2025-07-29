@@ -1,3 +1,4 @@
+// Package http provides HTTP handler functionality for the application
 package http
 
 import (
@@ -6,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// SetupRoutes configures the HTTP routes for the application
 func SetupRoutes(app *fiber.App) {
 	app.Get("/health", healthCheck)
 }

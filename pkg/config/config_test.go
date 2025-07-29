@@ -7,17 +7,24 @@ import (
 	"stock-consolidation/pkg/config"
 )
 
+// setEnv sets an environment variable and fails the test if it fails
+func setEnv(t *testing.T, key, value string) {
+	if err := os.Setenv(key, value); err != nil {
+		t.Fatalf("Failed to set environment variable %s: %v", key, err)
+	}
+}
+
 func TestLoadConfig(t *testing.T) {
 	t.Run("success load config", func(t *testing.T) {
 		// Set environment variables
-		os.Setenv("DB_HOST", "localhost")
-		os.Setenv("DB_PORT", "5432")
-		os.Setenv("DB_USER", "admin")
-		os.Setenv("DB_PASSWORD", "admin")
-		os.Setenv("DB_NAME", "stockdb")
-		os.Setenv("SERVICE_PORT", "3000")
-		os.Setenv("HQ_END_POINT", "http://localhost:8080")
-		os.Setenv("HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
+		setEnv(t, "DB_HOST", "localhost")
+		setEnv(t, "DB_PORT", "5432")
+		setEnv(t, "DB_USER", "admin")
+		setEnv(t, "DB_PASSWORD", "admin")
+		setEnv(t, "DB_NAME", "stockdb")
+		setEnv(t, "SERVICE_PORT", "3000")
+		setEnv(t, "HQ_END_POINT", "http://localhost:8080")
+		setEnv(t, "HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
 
 		cfg, err := config.Load()
 		if err != nil {
@@ -55,13 +62,13 @@ func TestLoadConfig(t *testing.T) {
 		os.Clearenv()
 
 		// Set other variables except DB_HOST
-		os.Setenv("DB_PORT", "5432")
-		os.Setenv("DB_USER", "admin")
-		os.Setenv("DB_PASSWORD", "admin")
-		os.Setenv("DB_NAME", "stockdb")
-		os.Setenv("SERVICE_PORT", "3000")
-		os.Setenv("HQ_END_POINT", "http://localhost:8080")
-		os.Setenv("HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
+		setEnv(t, "DB_PORT", "5432")
+		setEnv(t, "DB_USER", "admin")
+		setEnv(t, "DB_PASSWORD", "admin")
+		setEnv(t, "DB_NAME", "stockdb")
+		setEnv(t, "SERVICE_PORT", "3000")
+		setEnv(t, "HQ_END_POINT", "http://localhost:8080")
+		setEnv(t, "HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
 
 		_, err := config.Load()
 		if err == nil {
@@ -77,13 +84,13 @@ func TestLoadConfig(t *testing.T) {
 		os.Clearenv()
 
 		// Set required variables
-		os.Setenv("DB_HOST", "localhost")
-		os.Setenv("DB_PORT", "5432")
-		os.Setenv("DB_USER", "admin")
-		os.Setenv("DB_PASSWORD", "admin")
-		os.Setenv("DB_NAME", "stockdb")
-		os.Setenv("HQ_END_POINT", "http://localhost:8080")
-		os.Setenv("HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
+		setEnv(t, "DB_HOST", "localhost")
+		setEnv(t, "DB_PORT", "5432")
+		setEnv(t, "DB_USER", "admin")
+		setEnv(t, "DB_PASSWORD", "admin")
+		setEnv(t, "DB_NAME", "stockdb")
+		setEnv(t, "HQ_END_POINT", "http://localhost:8080")
+		setEnv(t, "HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
 
 		cfg, err := config.Load()
 		if err != nil {
@@ -101,13 +108,13 @@ func TestLoadConfig(t *testing.T) {
 		os.Clearenv()
 
 		// Set other required variables except DB_NAME
-		os.Setenv("DB_HOST", "localhost")
-		os.Setenv("DB_PORT", "5432")
-		os.Setenv("DB_USER", "admin")
-		os.Setenv("DB_PASSWORD", "admin")
-		os.Setenv("SERVICE_PORT", "3000")
-		os.Setenv("HQ_END_POINT", "http://localhost:8080")
-		os.Setenv("HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
+		setEnv(t, "DB_HOST", "localhost")
+		setEnv(t, "DB_PORT", "5432")
+		setEnv(t, "DB_USER", "admin")
+		setEnv(t, "DB_PASSWORD", "admin")
+		setEnv(t, "SERVICE_PORT", "3000")
+		setEnv(t, "HQ_END_POINT", "http://localhost:8080")
+		setEnv(t, "HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
 
 		_, err := config.Load()
 		if err == nil {
