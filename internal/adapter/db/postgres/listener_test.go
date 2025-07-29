@@ -192,6 +192,10 @@ func TestPostgresListener(t *testing.T) {
 			DBName:     "stockdb",
 		}
 
+		// Add timeout to prevent hanging
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
 		listener, err := postgres.NewListener(cfg)
 		if err != nil {
 			// If connection fails, just skip the test
@@ -199,7 +203,7 @@ func TestPostgresListener(t *testing.T) {
 		}
 
 		defer closeListener(t, listener)
-		stockChan, err := listener.ListenForChanges(context.Background())
+		stockChan, err := listener.ListenForChanges(ctx)
 		if err != nil {
 			t.Fatalf("Failed to start listening: %v", err)
 		}
