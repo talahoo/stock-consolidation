@@ -32,13 +32,18 @@ stockdb=#
 
 docker-compose down; docker-compose up --build -d
 
-docker exec -it   cdc-stock-consolidation-app sh
+docker exec -it   cdc-stock-consolidation-app-1 sh
 
 docker exec cdc-stock-consolidation-app-1 env
 
 docker logs -f cdc-stock-consolidation-app-1
 
 docker exec -it cdc-stock-consolidation-app-1 /bin/sh
+
+
+docker exec -i cdc-stock-consolidation-db-1 psql -U admin -d stockdb -c "INSERT INTO stock (product_id, branch_id, quantity, reserved) VALUES (4, 1, 300, 30);"
+
+docker logs cdc-stock-consolidation-app-1
 
 curl -v http://localhost:3000/health
 
@@ -48,3 +53,27 @@ cd D:/Training/AIEnhancementCourse/Assigment/FinalProject/cdc-stock-consolidatio
 cd D:/Training/AIEnhancementCourse/Assigment/FinalProject/cdc-stock-consolidation; $env:DB_HOST="localhost"; $env:DB_PORT="5432"; $env:DB_USER="admin"; $env:DB_PASSWORD="admin"; $env:DB_NAME="stockdb"; $env:SERVICE_PORT="3000"; $env:HQ_END_POINT="http://localhost:8080"; $env:HQ_BASIC_AUTHORIZATION="Basic dXNlcjpwYXNz"; go test ./... -cover
 
 docker exec cdc-stock-consolidation-app-1 env | Select-String "DB_"
+
+
+git init; git add .; git commit -m "Initial commit: CDC Stock Consolidation System"; git remote add origin https://github.com/talahoo/stock-consolidation.git; git push -u origin main
+
+git push -u origin master
+
+git add README.md; git commit -m "Add comprehensive README.md"; git push origin master
+
+go test ./... -coverprofile=coverage.out; go tool cover -func=coverage.out
+
+
+---- step by step checking
+
+docker compose down -v
+
+docker compose up --build -d
+
+docker compose ps
+
+docker logs cdc-stock-consolidation-app-1
+
+docker exec -i cdc-stock-consolidation-db-1 psql -U admin -d stockdb -c "INSERT INTO stock (product_id, branch_id, quantity, reserved) VALUES (6, 3, 200, 25);"
+
+docker logs cdc-stock-consolidation-app-1 --tail 10
