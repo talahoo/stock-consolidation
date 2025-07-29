@@ -193,21 +193,24 @@ func TestPostgresListener(t *testing.T) {
 		}
 
 		listener, err := postgres.NewListener(cfg)
-		if err == nil {
-			defer closeListener(t, listener)
-			stockChan, err := listener.ListenForChanges(context.Background())
-			if err != nil {
-				t.Fatalf("Failed to start listening: %v", err)
-			}
+		if err != nil {
+			// If connection fails, just skip the test
+			t.Skipf("Skipping real connection test due to connection error: %v", err)
+		}
 
-			// Just test that the channel is created
-			select {
-			case <-stockChan:
-				// Should not receive anything
-				t.Error("Unexpected stock change received")
-			case <-time.After(100 * time.Millisecond):
-				// This is expected
-			}
+		defer closeListener(t, listener)
+		stockChan, err := listener.ListenForChanges(context.Background())
+		if err != nil {
+			t.Fatalf("Failed to start listening: %v", err)
+		}
+
+		// Just test that the channel is created
+		select {
+		case <-stockChan:
+			// Should not receive anything
+			t.Error("Unexpected stock change received")
+		case <-time.After(100 * time.Millisecond):
+			// This is expected
 		}
 	})
 }

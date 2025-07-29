@@ -162,3 +162,5 @@ go test ./... -v -short
 go test ./pkg/logger -v
 
 go test ./pkg/logger -v -count=1
+
+go test ./... -coverprofile=coverage.out

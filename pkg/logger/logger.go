@@ -84,5 +84,11 @@ func Fatal(format string, v ...interface{}) {
 			log.Printf("Warning: Failed to sync log file: %v", err)
 		}
 	}
-	log.Fatal("FATAL: " + msg) // Console output and exit
+
+	// Don't exit during tests
+	if os.Getenv("TESTING") != "" {
+		log.Print("FATAL: " + msg) // Console output without exit
+	} else {
+		log.Fatal("FATAL: " + msg) // Console output and exit
+	}
 }
