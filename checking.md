@@ -74,7 +74,6 @@ docker compose ps
 
 docker logs cdc-stock-consolidation-app-1
 
-docker exec -i cdc-stock-consolidation-db-1 psql -U admin -d stockdb -c "INSERT INTO stock (product_id, branch_id, quantity, reserved) VALUES (6, 3, 200, 25);"
 
 docker logs cdc-stock-consolidation-app-1 --tail 10
 
@@ -82,7 +81,12 @@ git status
 
 git add .; git commit -m "Update checking.md with testing steps and fix database connection"
 
-git add .; git commit -m "Refactoring for linter"
+git add .; git commit -m "Refactoring for linter : change go.mod"
+
+git add .; git commit -m "Revamp for workflow Test for Set up job"
+
+git add .; git commit -m "change internal adapter db for lister test"
+
 
 git push origin master
 
@@ -97,8 +101,10 @@ go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; golangci-
 ---CI/CD
 
 # Pastikan semua perubahan sudah di-commit
+git add .github/workflows/ci.yml
 git add .github/workflows/go.yml
-git commit -m "feat: add GitHub Actions workflow for lint and test"
+
+git commit -m "feat: revamp GitHub Actions workflow for lint and test"
 
 # Push ke GitHub
 git push origin master

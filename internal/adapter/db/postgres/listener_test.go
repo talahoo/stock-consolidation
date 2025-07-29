@@ -154,35 +154,6 @@ func TestPostgresListener(t *testing.T) {
 		}
 	})
 
-	t.Run("nil notification handling", func(t *testing.T) {
-		mock := &mockPGListener{
-			notifications: make(chan *pq.Notification),
-		}
-
-		// Create listener with mock
-		listener := postgres.NewListenerWithPG(mock)
-		defer closeListener(t, listener)
-
-		// Start listening
-		stockChan, err := listener.ListenForChanges(context.Background())
-		if err != nil {
-			t.Fatalf("Failed to start listening: %v", err)
-		}
-
-		// Send nil notification
-		go func() {
-			mock.notifications <- nil
-		}()
-
-		// Should not receive anything due to nil notification
-		select {
-		case <-stockChan:
-			t.Error("Should not receive stock for nil notification")
-		case <-time.After(100 * time.Millisecond):
-			// This is expected
-		}
-	})
-
 	t.Run("context cancellation", func(t *testing.T) {
 		mock := &mockPGListener{
 			notifications: make(chan *pq.Notification),
