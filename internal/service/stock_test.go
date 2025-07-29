@@ -3,6 +3,7 @@ package service_test
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -29,7 +30,49 @@ func (m *mockStockRepository) Close() error {
 	return nil
 }
 
+func setupTestEnv() func() {
+	// Save original environment variables
+	envVars := []string{
+		"DB_HOST",
+		"DB_PORT",
+		"DB_USER",
+		"DB_PASSWORD",
+		"DB_NAME",
+		"SERVICE_PORT",
+		"HQ_END_POINT",
+		"HQ_BASIC_AUTHORIZATION",
+	}
+
+	originalEnvVars := make(map[string]string)
+	for _, env := range envVars {
+		originalEnvVars[env] = os.Getenv(env)
+	}
+
+	// Set test environment variables
+	os.Setenv("DB_HOST", "localhost")
+	os.Setenv("DB_PORT", "5432")
+	os.Setenv("DB_USER", "admin")
+	os.Setenv("DB_PASSWORD", "admin123")
+	os.Setenv("DB_NAME", "stockdb")
+	os.Setenv("SERVICE_PORT", "3000")
+	os.Setenv("HQ_END_POINT", "http://localhost:8085/stock")
+	os.Setenv("HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
+
+	// Return cleanup function
+	return func() {
+		for env, value := range originalEnvVars {
+			if value != "" {
+				os.Setenv(env, value)
+			} else {
+				os.Unsetenv(env)
+			}
+		}
+	}
+}
+
 func TestStockService_ListenForChanges(t *testing.T) {
+	cleanup := setupTestEnv()
+	defer cleanup()
 	t.Run("success receive stock changes", func(t *testing.T) {
 		stockChan := make(chan domain.Stock)
 		mockRepo := &mockStockRepository{

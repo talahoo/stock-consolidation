@@ -12,9 +12,23 @@ import (
 	"github.com/lib/pq"
 )
 
+type PGListener interface {
+	Listen(channel string) error
+	Ping() error
+	Close() error
+	NotificationChannel() <-chan *pq.Notification
+}
+
 type StockListener struct {
-	listener *pq.Listener
+	listener PGListener
 	channel  string
+}
+
+func NewListenerWithPG(listener PGListener) *StockListener {
+	return &StockListener{
+		listener: listener,
+		channel:  "stock_changes",
+	}
 }
 
 func NewListener(cfg *config.Config) (*StockListener, error) {
@@ -60,7 +74,7 @@ func (l *StockListener) ListenForChanges(ctx context.Context) (<-chan domain.Sto
 
 		for {
 			select {
-			case n := <-l.listener.Notify:
+			case n := <-l.listener.NotificationChannel():
 				logger.Info("Received notification: %+v", n)
 				if n == nil {
 					logger.Info("Received empty notification")

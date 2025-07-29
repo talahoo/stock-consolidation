@@ -1,7 +1,7 @@
 linters:
   enable:
     - gofmt
-    - golint
+    - revive    # pengganti golint
     - govet
     - errcheck
     - staticcheck
