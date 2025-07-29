@@ -1,0 +1,44 @@
+-- Create the stock table
+CREATE TABLE stock (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  product_id INTEGER NOT NULL,
+  branch_id INTEGER NOT NULL,
+  quantity INTEGER NOT NULL DEFAULT 0,
+  reserved INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
+);
+
+CREATE UNIQUE INDEX uniq_product_branch ON stock (product_id, branch_id);
+
+
+-- Drop old function and trigger if they exist
+DROP TRIGGER IF EXISTS stock_changes_trigger ON stock;
+DROP FUNCTION IF EXISTS notify_stock_changes();
+
+-- Trigger for INSERT and UPDATE
+CREATE OR REPLACE FUNCTION notify_stock_changes() RETURNS trigger AS $$
+DECLARE
+    payload json;
+BEGIN
+    IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE') THEN
+        payload := json_build_object(
+            'id', NEW.id,
+            'product_id', NEW.product_id,
+            'branch_id', NEW.branch_id,
+            'quantity', NEW.quantity,
+            'reserved', NEW.reserved,
+            'created_at', NEW.created_at,
+            'updated_at', NEW.updated_at
+        );
+        PERFORM pg_notify('stock_changes', payload::text);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger attach
+CREATE TRIGGER stock_changes_trigger
+    AFTER INSERT OR UPDATE ON stock
+    FOR EACH ROW
+    EXECUTE FUNCTION notify_stock_changes();

@@ -1,0 +1,62 @@
+package config_test
+
+import (
+	"os"
+	"testing"
+
+	"stock-consolidation/pkg/config"
+)
+
+func TestLoadConfig(t *testing.T) {
+	t.Run("success load config", func(t *testing.T) {
+		// Set environment variables
+		os.Setenv("DB_HOST", "localhost")
+		os.Setenv("DB_PORT", "5432")
+		os.Setenv("DB_USER", "admin")
+		os.Setenv("DB_PASSWORD", "admin")
+		os.Setenv("DB_NAME", "stockdb")
+		os.Setenv("SERVICE_PORT", "3000")
+		os.Setenv("HQ_END_POINT", "http://localhost:8080")
+		os.Setenv("HQ_BASIC_AUTHORIZATION", "Basic dXNlcjpwYXNz")
+
+		cfg, err := config.Load()
+		if err != nil {
+			t.Fatalf("LoadConfig() error = %v", err)
+		}
+
+		if cfg.DBHost != "localhost" {
+			t.Errorf("LoadConfig() DBHost = %v, want %v", cfg.DBHost, "localhost")
+		}
+		if cfg.DBPort != "5432" {
+			t.Errorf("LoadConfig() DBPort = %v, want %v", cfg.DBPort, "5432")
+		}
+		if cfg.DBUser != "admin" {
+			t.Errorf("LoadConfig() DBUser = %v, want %v", cfg.DBUser, "admin")
+		}
+		if cfg.DBPassword != "admin" {
+			t.Errorf("LoadConfig() DBPassword = %v, want %v", cfg.DBPassword, "admin")
+		}
+		if cfg.DBName != "stockdb" {
+			t.Errorf("LoadConfig() DBName = %v, want %v", cfg.DBName, "stockdb")
+		}
+		if cfg.ServicePort != "3000" {
+			t.Errorf("LoadConfig() ServicePort = %v, want %v", cfg.ServicePort, "3000")
+		}
+		if cfg.HQEndPoint != "http://localhost:8080" {
+			t.Errorf("LoadConfig() HQEndPoint = %v, want %v", cfg.HQEndPoint, "http://localhost:8080")
+		}
+		if cfg.HQBasicAuthorization != "Basic dXNlcjpwYXNz" {
+			t.Errorf("LoadConfig() HQBasicAuthorization = %v, want %v", cfg.HQBasicAuthorization, "Basic dXNlcjpwYXNz")
+		}
+	})
+
+	t.Run("missing required config", func(t *testing.T) {
+		// Clear environment variables
+		os.Clearenv()
+
+		_, err := config.Load()
+		if err == nil {
+			t.Error("LoadConfig() expected error for missing required config")
+		}
+	})
+}
