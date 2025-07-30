@@ -37,27 +37,17 @@ jobs:
       run: go mod download
 
     - name: Run tests
-      run: go test -v -coverprofile=coverage.out ./...
-
-    - name: Debug coverage file
-      run: |
-        echo "List files:"
-        ls -lah
-        echo "Preview coverage:"
-        head -n 10 coverage.out
+      run: go test -v -coverprofile=coverage.txt ./...
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: talahoo/stock-consolidation
-        files: ./coverage.out
-        verbose: true 
-        fail_ci_if_error: true 
         
     - name: Check coverage
       run: |
-        coverage=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+        coverage=$(go tool cover -func=coverage.txt | grep total | awk '{print $3}' | sed 's/%//')
         if (( $(echo "$coverage < 80" | bc -l) )); then
           echo "Test coverage is below 80%"
           echo "::warning::Test coverage is below 80% ($coverage%)"
