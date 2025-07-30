@@ -75,6 +75,10 @@ docker compose ps
 docker logs cdc-stock-consolidation-app-1
 
 
+docker exec -i cdc-stock-consolidation-db-1 psql -U admin -d stockdb -c "INSERT INTO stock (product_id, branch_id, quantity, reserved) VALUES (4, 1, 300, 30);"
+
+
+
 docker logs cdc-stock-consolidation-app-1 --tail 10
 
 git status
@@ -164,3 +168,7 @@ go test ./pkg/logger -v
 go test ./pkg/logger -v -count=1
 
 go test ./... -coverprofile=coverage.out
+
+go test ./... -v -short
+
+go test ./... -cover -short
