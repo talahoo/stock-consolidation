@@ -46,3 +46,9 @@ jobs:
           echo "Test coverage is below 80%"
           exit 1
         fi
+
+    - name: Upload results to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} 
+        
