@@ -1,6 +1,9 @@
 # Stock Consolidation Service
 
-![Go CI/CD](https://github.com/talahoo/stock-consolidation/actions/workflows/go.yml/badge.svg)
+## Badges
+[![Codecov Coverage](https://codecov.io/gh/talahoo/stock-consolidation/branch/master/graph/badge.svg)](https://codecov.io/gh/talahoo/stock-consolidation)
+[![Go CI/CD Status](https://github.com/talahoo/stock-consolidation/actions/workflows/go.yml/badge.svg)](https://github.com/talahoo/stock-consolidation/actions)
+
 
 A Change Data Capture (CDC) service that monitors stock changes in branch databases and consolidates them to a central HQ system.
 
