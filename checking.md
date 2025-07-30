@@ -169,6 +169,9 @@ go test ./pkg/logger -v -count=1
 
 go test ./... -coverprofile=coverage.out
 
+ - name: Run tests
+      run: go test -v -coverprofile=coverage.out ./...
+
 go test ./... -v -short
 
 go test ./... -cover -short
