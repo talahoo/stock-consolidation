@@ -113,6 +113,8 @@ git add .github/workflows/go.yml
 
 git commit -m "feat: revamp GitHub Actions workflow for lint and test"
 
+git commit -m "feat: ci.yml add codecov"
+
 # Push ke GitHub
 git push origin master
 
@@ -175,3 +177,33 @@ go test ./... -coverprofile=coverage.out
 go test ./... -v -short
 
 go test ./... -cover -short
+
+
+https://app.codecov.io/gh/talahoo/stock-consolidation/config/badge
+https://codecov.io/gh/talahoo/stock-consolidation/graph/badge.svg?token=WUJRM8JBFT
+
+sonar_cloud
+talahoo_stock-consolidation
+0a7c62b514fbe76ad4b65c998984825a9b3c0633
+
+# Buat branch baru dan pindah ke sana
+git checkout -b refactor-code
+
+# Stage file yang berubah
+git add checking.md
+
+# Commit perubahan
+git commit -m "refactor: update checking.md"
+
+# Push branch baru ke GitHub
+git push origin refactor-code
+
+Pull Request: dan Merge:
+
+Setelah merge:
+(Opsional) Hapus branch refactor-code
+# Local:
+git branch -d refactor-code
+
+# Remote:
+git push origin --delete refactor-code
