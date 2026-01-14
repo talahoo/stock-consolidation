@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o stockconsolidation ./cmd/stockconsolida
 
 #FROM alpine:latest
 # Use specific Alpine version
-FROM alpine:3.22.1
+FROM alpine:3.23.2
 
 WORKDIR /app
 
